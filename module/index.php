@@ -92,6 +92,7 @@ if('admin'==$path_array[1]){
 			print '<input type="submit" value="Сгенерировать">';
 			print '</form>';
 		}
+		else
 		if('viz-price'==$path_array[2]){
 			if($_POST['amount']){
 				$amount=$_POST['amount'];
