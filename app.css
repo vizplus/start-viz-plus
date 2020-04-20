@@ -106,13 +106,14 @@ hr{
 	clear:both;
 }
 body{
-	background:#f2f2f2;
-	margin:0;
-	padding:0;
-	font-family:'IBM Plex Serif',Georgia,Cambria,'Times New Roman',serif;
-	font-size:16px;
-	-webkit-font-smoothing:antialiased;
-	-moz-osx-font-smoothing:grayscale;
+	background: #f2f2f2;
+	margin: 0;
+	padding: 0;
+	font-family: 'IBM Plex Serif',Georgia,Cambria,'Times New Roman',serif;
+	font-size: 16px;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	min-width: 350px;
 }
 a{
 	color:#000;
@@ -159,14 +160,14 @@ a:hover{
 	-o-user-select:none;
 }
 .header.shadow{
-	border-bottom:1px solid rgba(0,0,0,0.2);
-	box-shadow:0 2px 6px -1px rgba(0,0,0,0.07), 0 4px 7px 0 rgba(0,0,0,0.07), 0 1px 12px 0 rgba(0,0,0,0.1);
+	box-shadow: 0 15px 12px -12px rgba(0,0,0,0.1);
 }
 .header .logo{
-	margin-left:15px;
-	line-height:64px;
-	vertical-align:middle;
-	display:inline-block;
+	font-size: 22px;
+	margin-left: 15px;
+	line-height: 64px;
+	vertical-align: top;
+	display: inline-block;
 }
 .header.center{
 	text-align:center;
@@ -189,10 +190,19 @@ a:hover{
 .header .menu-el:hover{
 	box-shadow:inset 0 -5px #0071d2;
 }
-
+.header .logo a{
+	text-decoration: none;
+	border: 0;
+	outline: none;
+	box-shadow: none;
+}
+.header .logo .prefix.selected{
+	font-weight: bold;
+	color: #0071d2;
+}
 .horizontal-view{
 	margin:0 auto;
-	max-width:1335px;
+	max-width:1000px;
 }
 .vertical-view{
 	padding:90px 15px;
@@ -266,16 +276,16 @@ ul.cards-nav li:hover{
 	margin-bottom:5px;
 }
 .card h3{
-	text-align:center;
-	font-size:28px;
-	line-height:34px;
-	margin-bottom:10px;
+	text-align: center;
+	font-size: 30px;
+	line-height: 34px;
+	margin-bottom: 25px;
 }
 .card h4{
 	text-align:left;
-	font-size:20px;
-	line-height:24px;
-	margin-bottom:6px;
+	font-size:24px;
+	line-height:28px;
+	margin-bottom:8px;
 }
 .card p{
 	font-size:18px;
