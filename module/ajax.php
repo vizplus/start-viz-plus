@@ -4,6 +4,7 @@ if('check-login-available'==$path_array[2]){
 	header('HTTP/1.1 200 Ok');
 	$api=new viz_jsonrpc_web($config['jsonrpc_node']);
 	$account_login=$_POST['account_login'];
+	$account_login=strtolower($account_login);
 	$account_login=preg_replace('~[^a-z0-9\-]~','',$account_login);
 	$user_arr=$api->execute_method('get_accounts',array(array($account_login)))[0];
 	if($user_arr['name']){
@@ -21,6 +22,7 @@ if('claim-code'==$path_array[2]){
 	$api=new viz_jsonrpc_web($config['jsonrpc_node']);
 
 	$account_login=$_POST['account_login'];
+	$account_login=strtolower($account_login);
 	$account_login=preg_replace('~[^a-z0-9\-\.]~','',$account_login);
 	$code=$_POST['code'];
 
@@ -69,6 +71,7 @@ if('claim-code-balance'==$path_array[2]){
 	$api=new viz_jsonrpc_web($config['jsonrpc_node']);
 
 	$account_login=$_POST['account_login'];
+	$account_login=strtolower($account_login);
 	$account_login=preg_replace('~[^a-z0-9\-\.]~','',$account_login);
 	$code=$_POST['code'];
 
@@ -135,6 +138,7 @@ if('account-create'==$path_array[2]){
 
 	if(true==$result['success']){
 		$account_login=$_POST['account_login'];
+		$account_login=strtolower($account_login);
 		$account_login=preg_replace('~[^a-z0-9\-]~','',$account_login);
 		$user_arr=$api->execute_method('get_accounts',array(array($account_login)))[0];
 		if($user_arr['name']){
