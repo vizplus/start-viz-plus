@@ -1,4 +1,4 @@
-viz.config.set('websocket','https://solox.world/');
+viz.config.set('websocket','https://node.viz.plus/');
 function pass_gen(length=100,to_wif=true){
 	let charset='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+-=_:;.,@!^&*$';
 	let ret='';
@@ -28,7 +28,6 @@ $(window).on('hashchange',function(e){
 		$(window).scrollTop(0);
 	}
 });
-
 function app_keyboard(e){
 	if(!e)e=window.event;
 	var key=(e.charCode)?e.charCode:((e.keyCode)?e.keyCode:((e.which)?e.which:0));
@@ -173,7 +172,10 @@ $(document).ready(function(){
 			var recaptcha_response=grecaptcha.getResponse();
 			var error=false;
 			if(''!=recaptcha_response){
-				var account_login=$('input[name=create-account-login]').val();
+				var account_login=$('input[name=create-account-login]').val().trim();
+				account_login=account_login.toLowerCase();
+				$('input[name=create-account-login]').val(account_login);
+
 				if(account_login.length<3){
 					error='Логин слишком короткий';
 					$('.create-account-available').html(error);
@@ -199,7 +201,6 @@ $(document).ready(function(){
 						url:'/ajax/account-create/',
 						data:{recaptcha_response,account_login,'public_master':keys['masterPubkey'],'public_active':keys['activePubkey'],'public_regular':keys['regularPubkey']/*,'public_memo':keys['memoPubkey']*/},
 						success:function(result){
-							//console.log(result);
 							$('.submit-button-ring[rel=create-account]').css('display','none');
 							result_json=JSON.parse(result);
 							if('failed recaptcha'==result_json.result){
@@ -341,7 +342,9 @@ $(document).ready(function(){
 	if(0<$('input[name=claim-action]').length){
 		$('input[name=claim-action]').click(function(){
 			var error=false;
-			var account_login=$('input[name=claim-login]').val();
+			var account_login=$('input[name=claim-login]').val().trim();
+			account_login=account_login.toLowerCase();
+			$('input[name=claim-login]').val(account_login);
 			var code=$('input[name=claim-code]').val().trim();
 			$('input[name=claim-action]').attr('disabled','disabled');
 			$('.submit-button-ring[rel=claim-action]').css('display','inline-block');
@@ -418,6 +421,44 @@ $(document).ready(function(){
 		}
 	}
 	if(0<$('input[name=create-account-login]').length){
+		$('input[name=create-account-login]').bind('input',function(e){
+			//console.log('input',e);
+			if(!e)e=window.event;
+			e=e.originalEvent;
+			let char=e.data;
+			if(char.length>1){
+				char=char.slice(-1);
+			}
+			if(null!==char){
+				save=true;
+				if(/^([A-Z])$/.test(char)){
+					$(this).val(''+$(this).val().slice(0,-char.length));
+					$(this).val(''+$(this).val()+char.toLowerCase());
+					return;
+				}
+				if(0==$(this).val().length){
+					if(/^([a-z])$/.test(char)){
+						save=true;
+					}
+					else{
+						save=false;
+					}
+				}
+				else{
+					if(/^([a-z0-9\-])$/.test(char)){
+						save=true;
+					}
+					else{
+						save=false;
+					}
+				}
+				if(!save){
+					$(this).val(''+$(this).val().slice(0,-char.length));
+				}
+			}
+		});
+		/*
+		//old keypress
 		$('input[name=create-account-login]').bind('keypress',function(e){
 			if(!e)e=window.event;
 			let key=(e.charCode)?e.charCode:((e.keyCode)?e.keyCode:((e.which)?e.which:0));
@@ -444,12 +485,50 @@ $(document).ready(function(){
 			}
 			return true;
 		});
+		*/
 		$('input[name=create-account-login]').bind('keyup',function(e){
 			clearTimeout(check_login_timer);
 			check_login_timer=setTimeout(check_login,300,$(this));
 		});
 	}
 	if(0<$('input[name=alt-create-account-login]').length){
+		$('input[name=alt-create-account-login]').bind('input',function(e){
+			if(!e)e=window.event;
+			e=e.originalEvent;
+			let char=e.data;
+			if(char.length>1){
+				char=char.slice(-1);
+			}
+			if(null!==char){
+				save=true;
+				if(/^([A-Z])$/.test(char)){
+					$(this).val(''+$(this).val().slice(0,-char.length));
+					$(this).val(''+$(this).val()+char.toLowerCase());
+					return;
+				}
+				if(0==$(this).val().length){
+					if(/^([a-z])$/.test(char)){
+						save=true;
+					}
+					else{
+						save=false;
+					}
+				}
+				else{
+					if(/^([a-z0-9\-])$/.test(char)){
+						save=true;
+					}
+					else{
+						save=false;
+					}
+				}
+				if(!save){
+					$(this).val(''+$(this).val().slice(0,-char.length));
+				}
+			}
+		});
+		/*
+		//old keypress
 		$('input[name=alt-create-account-login]').bind('keypress',function(e){
 			if(!e)e=window.event;
 			let key=(e.charCode)?e.charCode:((e.keyCode)?e.keyCode:((e.which)?e.which:0));
@@ -476,6 +555,7 @@ $(document).ready(function(){
 			}
 			return true;
 		});
+		*/
 		$('input[name=alt-create-account-login]').bind('keyup',function(e){
 			clearTimeout(check_login_timer);
 			check_login_timer=setTimeout(check_login,300,$(this));
