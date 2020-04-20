@@ -163,7 +163,7 @@ print '
 	<div class="cards-view">
 		<div class="cards-container">
 			<div class="card" data-index="descr">
-				<h3 class="captions">Ваш первый аккаунт в ВИЗе</h3>
+				<h3>Ваш первый аккаунт в ВИЗе</h3>
 				<p><strong>На этой странице вы создадите свой первый аккаунт, добавите на него немного социального капитала (по желанию) и найдёте ссылки на некоторые приложения и сайты из экосистемы ВИЗ.</strong></p>
                                 <p>Для создания аккаунта необходимо прочитать пояснения ниже и поставить галочки под некоторыми пунктами. Это займёт несколько минут, но избавит вас от ненужных проблем и вопросов.</p>
 				<p>Аккаунты в ВИЗе отличаются от аккаунтов в социальных сетях, в электронной почте, на сайтах и т.п. Ваш аккаунт - это ваш личный счёт в блокчейне VIZ, на нём вы храните свой социальный капитал - главную ценность в экосистеме.</p>
@@ -269,7 +269,7 @@ print '
 					<p><input type="button" class="submit-button" name="alt-create-account" value="Использовать код"><span class="submit-button-ring" rel="alt-create-account"></span></p>
 
 					<div class="alt-account-keys hidden">
-						<h3 class="captions">Поздравляем!</h3>
+						<h3>Поздравляем!</h3>
 
 						<p>Ваш аккаунт: <span class="green account-login"></span></p>
 						<p>В капитал переведено: <span class="green invite-balance"></span></p>
@@ -381,7 +381,7 @@ print '
 					<div class="column column-2 shadow with-buttons">
 						<h4 class="captions">Телеграм-бот &mdash; «шпион»</h4>
 						<p>С помощью этого бота можно следить за действиями других участников ВИЗа и узнавать информацию об аккаунтах. Или контролировать собственную активность. В боте не очень простая система фильтров, поэтому потренируйтесь в её настройке.</p>
-						<div class="buttons captions"><a class="inline-button" href="https://t.me/viznotifybot" target="_blank">Адрес</a><a class="inline-button" href="https://golos.id/ru--bot/@jackvote/khochu-predstavit-novogo-bota-dlya-blokcheina-viz" target="_blank">Описание</a></div>
+						<div class="buttons captions"><a class="inline-button" href="https://t.me/viznotifybot" target="_blank">Адрес</a><a class="inline-button" href="https://golos.in/ru--bot/@jackvote/khochu-predstavit-novogo-bota-dlya-blokcheina-viz" target="_blank">Описание</a></div>
 					</div>
 				</div>
 
@@ -394,7 +394,7 @@ print '
 					<div class="column column-2 shadow with-buttons">
 						<h4 class="captions">Игра «Дикий Запад»</h4>
 						<p>Онлайн-игра, в которой стандартные операции блокчейна VIZ поданы в виде активности в стиле Дикого Запада: поиск золотых самородков, игра в казино и т.п. Игра продолжает развиваться, в ней периодически появляются новые развлечения.</p>
-						<div class="buttons captions"><a class="inline-button" href="https://wildviz.top/" target="_blank">Адрес</a><a class="inline-button" href="https://golos.id/viz/@xchng/wildviz-dikii-zapad-na-blokcheine" target="_blank">Описание</a></div>
+						<div class="buttons captions"><a class="inline-button" href="https://wildviz.top/" target="_blank">Адрес</a><a class="inline-button" href="https://golos.in/viz/@xchng/wildviz-dikii-zapad-na-blokcheine" target="_blank">Описание</a></div>
 					</div>
 				</div>
 
@@ -402,7 +402,7 @@ print '
 					<div class="column column-2 shadow with-buttons">
 						<h4 class="captions">Шлюз на криптобиржу BitShares</h4>
 						<p>Монеты viz торгуются на децентрализованной криптобирже BitShares. Торговля viz не требует сложной регистрации, она анонимна и удобна. Но чтобы завести монеты на биржу и вывести их оттуда, нужен посредник - т.н. «шлюз». В экосистеме ВИЗ пока есть один такой посредник - сервис XCHNG. Будьте внимательны и тщательно изучите инструкцию перед его использованием!</p>
-						<div class="buttons captions"><a class="inline-button" href="https://golos.id/bitshares/@xchng/pravila-raboty-avtomaticheskogo-shlyuza-xchng-viz" target="_blank">Описание</a></div>
+						<div class="buttons captions"><a class="inline-button" href="https://golos.in/bitshares/@xchng/pravila-raboty-avtomaticheskogo-shlyuza-xchng-viz" target="_blank">Описание</a></div>
 					</div>
 				</div>
 
