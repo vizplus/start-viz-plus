@@ -8,8 +8,10 @@
 	<meta property="og:description" content="{description}">
 	<meta name="twitter:description" content="{description}">
 	<meta name="viewport" content="width=device-width">
+<!--
 	<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Serif&display=swap" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Scada&display=swap" rel="stylesheet">
+-->
 
 	<link rel="stylesheet" href="/app.css?{css_change_time}">
 
@@ -19,9 +21,9 @@
 	<script type="text/javascript" src="/app.js?{script_change_time}"></script>
 </head>
 <body>
-<div class="header shadow unselectable center">
+<div class="header shadow unselectable">
 	<div class="horizontal-view">
-		<div class="logo"><a href="https://viz.plus/" class="logo"><img src="/logo_20.png" alt="VIZ+"></a></div>
+		<div class="logo"><a href="/" class="prefix selected">start.</a><a href="https://viz.plus/"><img src="/logo.svg" alt="VIZ+"></a></div>
 	</div>
 </div>
 <div class="horizontal-view vertical-view">
