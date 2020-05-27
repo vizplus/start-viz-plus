@@ -196,6 +196,7 @@ $(document).ready(function(){
 					$('.submit-button-ring[rel=create-account]').css('display','inline-block');
 					$('.create-account-error').html('');
 					keys=viz.auth.getPrivateKeys(account_login,pass_gen(100),['master','active','regular','memo']);
+					console.log(keys);
 					$.ajax({
 						type:'POST',
 						url:'/ajax/account-create/',
@@ -244,6 +245,14 @@ $(document).ready(function(){
 								$('.g-recaptcha').css('display','none');
 							}
 						},
+						error:function(xhr,ajaxOptions,thrownError){
+							console.log(xhr.statusText);
+							console.log(thrownError);
+							error='Неполадки на сервере, попробуйте позже';
+							$('.create-account-available').html('');
+							$('.create-account-error').html(error);
+							$('input[name=create-account]').removeAttr('disabled');
+						}
 					});
 				}
 			}
