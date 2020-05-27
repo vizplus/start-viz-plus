@@ -114,6 +114,7 @@ if('claim-code-balance'==$path_array[2]){
 	exit;
 }
 if('account-create'==$path_array[2]){
+	set_time_limit(10);
 	header("Content-type:text/html; charset=UTF-8");
 	header('HTTP/1.1 200 Ok');
 	$api=new viz_jsonrpc_web($config['jsonrpc_node']);
@@ -122,14 +123,16 @@ if('account-create'==$path_array[2]){
 	$post_data=http_build_query(
 		array(
 			'secret'=>$recaptcha_secret,
-			'response'=>$recaptcha_response
+			'response'=>$recaptcha_response,
+			//'remoteip' => $_SERVER['REMOTE_ADDR']//enable for ip check
 		)
 	);
 	$opts=array('http'=>
 		array(
 			'method'=>'POST',
 			'header'=>'Content-type: application/x-www-form-urlencoded',
-			'content'=>$post_data
+			'content'=>$post_data,
+			'timeout'=>5
 		)
 	);
 	$context=stream_context_create($opts);
@@ -154,7 +157,7 @@ if('account-create'==$path_array[2]){
 			$delegation=''.number_format($delegation,6,'.','').' SHARES';
 
 			$public_memo='VIZ1111111111111111111111111111111114T1Anm';
-			$tx1=build_account_create_tx($reg_wif,'0.000 VIZ',$delegation,$reg_login,$account_login,$public_master,$public_active,$public_regular,$public_memo,'','');
+			$tx1=build_account_create_tx($reg_wif,'1.000 VIZ',$delegation,$reg_login,$account_login,$public_master,$public_active,$public_regular,$public_memo,'','');
 			if($tx1){
 				$result=$api->execute_method('broadcast_transaction',$tx1);
 				if(false!==$result){
