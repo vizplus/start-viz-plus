@@ -6,6 +6,7 @@ class viz_jsonrpc_web{
 	public $result_arr=array();
 	public $post_num=1;
 	public $header_arr=array();
+	public $host_ip=array();
 	function set_header($name,$value){
 		$this->header_arr[$name]=$value;
 		if(''==$value){
@@ -149,21 +150,39 @@ class viz_jsonrpc_web{
 		}
 		$result='';
 		$port=80;
+
+		$socket_connect=$host;
+
+		if(!isset($this->host_ip[$socket_connect])){
+			$this->host_ip[$socket_connect]=gethostbyname($host);//get ip by host and cache it
+		}
+
+		$socket_connect=$this->host_ip[$socket_connect];
+
 		if(false!==strpos($url,'https://')){
 			$port=443;
-			$host='ssl://'.$host;
+			$socket_connect='ssl://'.$socket_connect;
 		}
+		else
 		if(false!==strpos($url,'wss://')){
 			$port=443;
-			$host='ssl://'.$host;
+			$socket_connect='ssl://'.$socket_connect;
 		}
 		if(false!==$use_port){
 			$port=$use_port;
 		}
-		if($sock=fsockopen($host, $port, $errno, $errstr, 2)){//timeout=2
+		$socket_connect.=':'.$port;
+
+		$context=stream_context_create();
+		stream_context_set_option($context,'ssl','peer_name',$host);
+		stream_context_set_option($context,'ssl','verify_peer',false);//save time for checking by cert provider
+		stream_context_set_option($context,'ssl','verify_peer_name',false);
+
+		$debug_time=microtime(true);
+		//if($sock=fsockopen($socket_connect, $port, $errno, $errstr, 2)){//connect timeout=2
+		if($sock=stream_socket_client($socket_connect,$errno,$errstr,2,STREAM_CLIENT_CONNECT,$context)){//connect timeout=2
 			fwrite($sock,$request,strlen($request));
 			$read_timeout=microtime(true)+5;//+5sec
-			//print '$read_timeout='.$read_timeout.PHP_EOL;
 			while(!feof($sock)){
 				$result.=fread($sock,1024);
 				//print 'microtime(true)='.(microtime(true)).',$read_timeout='.$read_timeout.PHP_EOL;
@@ -175,6 +194,7 @@ class viz_jsonrpc_web{
 			if(microtime(true)>$read_timeout){
 				if($debug){
 					print '!!! SOCKET TIMED OUT 5 SEC ['.date('d.m.Y H:i:s').']'.PHP_EOL;
+					print_r($request);
 				}
 				return false;
 			}
