@@ -28,11 +28,26 @@ $(window).on('hashchange',function(e){
 		$(window).scrollTop(0);
 	}
 });
+
 function app_keyboard(e){
 	if(!e)e=window.event;
 	var key=(e.charCode)?e.charCode:((e.keyCode)?e.keyCode:((e.which)?e.which:0));
 	if(key==27){
 		e.preventDefault();
+	}
+}
+
+function setCaretPosition(elem,caretPos) {
+	let range;
+	if (elem.createTextRange) {
+		range = elem.createTextRange();
+		range.move('character', caretPos);
+		range.select();
+	} else {
+		elem.focus();
+		if (elem.selectionStart !== undefined) {
+			elem.setSelectionRange(caretPos, caretPos);
+		}
 	}
 }
 
@@ -51,12 +66,26 @@ function download(filename, text) {
 	}
 }
 
+var hcaptcha_response=false;
+function hcaptcha_callback(response){
+	console.log(response);
+	hcaptcha_response=response;
+	$('.reg-form').css('display','block');
+}
+function hcaptcha_expire_callback(response){
+	console.log(response);
+	hcaptcha_response='';
+	$('.reg-form').css('display','block');
+}
+
+/*
 function recaptcha_callback(){
 	let recaptcha_response=grecaptcha.getResponse();
 	if(''!=recaptcha_response){
 		$('.reg-form').css('display','block');
 	}
 }
+*/
 $(document).ready(function(){
 	var hash_load=window.location.hash;
 	if(''!=hash_load){
@@ -150,16 +179,16 @@ $(document).ready(function(){
 
 	$(window).bind('beforeunload', function(e){
 		e.preventDefault();
-	    if($('.check input[type=checkbox]')[0].checked){
-	    	if($('.check input[type=checkbox]')[1].checked){
-	    		return;
-	    	}
-	    	else{
-		    	e.returnValue='';
-		    	return e.returnValue;
-		    }
-	    }
-	    return;
+		if($('.check input[type=checkbox]')[0].checked){
+			if($('.check input[type=checkbox]')[1].checked){
+				return;
+			}
+			else{
+				e.returnValue='';
+				return e.returnValue;
+			}
+		}
+		return;
 	});
 
 	if(0<$('input[name=create-account]').length){
@@ -169,15 +198,16 @@ $(document).ready(function(){
 				console.log('just return');
 				return;
 			}
-			var recaptcha_response=grecaptcha.getResponse();
+			//var captcha_response=grecaptcha.getResponse();
+			var captcha_response=hcaptcha_response;
 			var error=false;
-			if(''!=recaptcha_response){
+			if(''!=captcha_response){
 				var account_login=$('input[name=create-account-login]').val().trim();
 				account_login=account_login.toLowerCase();
 				$('input[name=create-account-login]').val(account_login);
 
 				if(account_login.length<3){
-					error='Логин слишком короткий';
+					error=ltmp_arr.errors.account_length_less;
 					$('.create-account-available').html(error);
 					$('.create-account-error').html('');
 					return;
@@ -185,7 +215,7 @@ $(document).ready(function(){
 				else{
 					var last_char=account_login.substr(-1,1);
 					if(!/^([a-z0-9])$/.test(last_char)){
-						error='Логин должен заканчиваться на латинский символ или цифру';
+						error=ltmp_arr.errors.account_last_symbol;
 						$('.create-account-available').html(error);
 						$('.create-account-error').html('');
 						return;
@@ -200,24 +230,24 @@ $(document).ready(function(){
 					$.ajax({
 						type:'POST',
 						url:'/ajax/account-create/',
-						data:{recaptcha_response,account_login,'public_master':keys['masterPubkey'],'public_active':keys['activePubkey'],'public_regular':keys['regularPubkey']/*,'public_memo':keys['memoPubkey']*/},
+						data:{captcha_response,account_login,'public_master':keys['masterPubkey'],'public_active':keys['activePubkey'],'public_regular':keys['regularPubkey'],'public_memo':keys['memoPubkey']},
 						success:function(result){
 							$('.submit-button-ring[rel=create-account]').css('display','none');
 							result_json=JSON.parse(result);
 							if('failed recaptcha'==result_json.result){
-								error='Каптча ответила отказом, попробуйте снова';
+								error=ltmp_arr.errors.captcha_invalid;
 								grecaptcha.reset();
 								$('.create-account-error').html(error);
 								$('input[name=create-account]').removeAttr('disabled');
 							}
 							if('login not available'==result_json.result){
-								error='Логин уже занят, попробуйте другой';
+								error=ltmp_arr.errors.account_already_exist;
 								$('.create-account-available').html(error);
 								$('.create-account-error').html('');
 								$('input[name=create-account]').removeAttr('disabled');
 							}
 							if('broadcast error'==result_json.result){
-								error='Неполадки на сервере, попробуйте позже';
+								error=ltmp_arr.errors.server_error;
 								$('.create-account-available').html('');
 								$('.create-account-error').html(error);
 								$('input[name=create-account]').removeAttr('disabled');
@@ -235,20 +265,21 @@ $(document).ready(function(){
 								$('.account-keys .master-key').html(keys['master']);
 								$('.account-keys .active-key').html(keys['active']);
 								$('.account-keys .regular-key').html(keys['regular']);
-								//$('.account-keys .memo-key').html(keys['memo']);
+								$('.account-keys .memo-key').html(keys['memo']);
 								$('.account-keys').css('display','block');
 
 								$('input[name=claim-login]').val(account_login);
 								$('input[name=claim-login]').attr('disabled','disabled');
 
-								download('viz-registration.txt','VIZ.plus registration\r\nAccount login: '+account_login+'\r\nMaster key: '+keys['master']+'\r\nActive key: '+keys['active']+'\r\nRegular key: '+keys['regular']/*+'\r\nMemo key: '+keys['memo']+''*/);
-								$('.g-recaptcha').css('display','none');
+								download('viz-registration.txt','VIZ.plus registration\r\nAccount login: '+account_login+'\r\nMaster key: '+keys['master']+'\r\nActive key: '+keys['active']+'\r\nRegular key: '+keys['regular']+'\r\nMemo key: '+keys['memo']+'');
+								$('.h-captcha').css('display','none');
+								//$('.g-recaptcha').css('display','none');
 							}
 						},
 						error:function(xhr,ajaxOptions,thrownError){
 							console.log(xhr.statusText);
 							console.log(thrownError);
-							error='Неполадки на сервере, попробуйте позже';
+							error=ltmp_arr.errors.server_error;
 							$('.create-account-available').html('');
 							$('.create-account-error').html(error);
 							$('input[name=create-account]').removeAttr('disabled');
@@ -257,7 +288,7 @@ $(document).ready(function(){
 				}
 			}
 			else{
-				error='Пожалуйста, поставьте еще раз галочку на каптче';
+				error=ltmp_arr.errors.captcha_expire;
 				$('.create-account-error').html(error);
 				return;
 			}
@@ -274,21 +305,21 @@ $(document).ready(function(){
 			var error=false;
 			var invite=$('input[name=alt-create-account-invite]').val();
 			if(!viz.auth.isWif(invite)){
-				error='Инвайт недействительный';
+				error=ltmp_arr.errors.invalid_invite;
 				$('.alt-create-account-error').html(error);
 				return;
 			}
 			var invite_public=viz.auth.wifToPublic(invite);
 			var account=$('input[name=alt-create-account-login]').val();
 			if(account.length<3){
-				error='Логин слишком короткий';
+				error=ltmp_arr.errors.account_length_less;
 				$('.alt-create-account-error').html(error);
 				return;
 			}
 			else{
 				var last_char=account.substr(-1,1);
 				if(!/^([a-z0-9])$/.test(last_char)){
-					error='Логин должен заканчиваться на латинский символ или цифру';
+					error=ltmp_arr.errors.account_last_symbol;
 					$('.alt-create-account-available').html(error);
 					$('.alt-create-account-error').html('');
 					return;
@@ -319,17 +350,17 @@ $(document).ready(function(){
 								$('.alt-account-keys .master-key').html(private_key);
 								$('.alt-account-keys .active-key').html(private_key);
 								$('.alt-account-keys .regular-key').html(private_key);
-								//$('.alt-account-keys .memo-key').html(private_key);
+								$('.alt-account-keys .memo-key').html(private_key);
 								$('.alt-account-keys').css('display','block');
 
 								$('input[name=claim-login]').val(account);
 								$('input[name=claim-login]').attr('disabled','disabled');
 
-								download('viz-registration.txt','VIZ.plus registration\r\nAccount login: '+account+'\r\nMaster key: '+private_key+'\r\nActive key: '+private_key+'\r\nRegular key: '+private_key/*+'\r\nMemo key: '+keys['memo']+''*/);
+								download('viz-registration.txt','VIZ.plus registration\r\nAccount login: '+account+'\r\nMaster key: '+private_key+'\r\nActive key: '+private_key+'\r\nRegular key: '+private_key+'\r\nMemo key: '+keys['memo']+'');
 							}
 							else{
 								$('.submit-button-ring[rel=alt-create-account]').css('display','none');
-								error='Неполадки на сервере, попробуйте позже';
+								error=ltmp_arr.errors.server_error;
 								$('.alt-create-account-available').html('');
 								$('.alt-create-account-error').html(error);
 								$('input[name=alt-create-account]').removeAttr('disabled');
@@ -338,7 +369,7 @@ $(document).ready(function(){
 					}
 					else{
 						$('.submit-button-ring[rel=alt-create-account]').css('display','none');
-						error='Неполадки на сервере, попробуйте позже';
+						error=ltmp_arr.errors.server_error;
 						$('.alt-create-account-available').html('');
 						$('.alt-create-account-error').html(error);
 						$('input[name=alt-create-account]').removeAttr('disabled');
@@ -368,22 +399,22 @@ $(document).ready(function(){
 					$('.submit-button-ring[rel=claim-action]').css('display','none');
 					result_json=JSON.parse(result);
 					if('too much attempts'==result_json.result){
-						error='Вы совершили более 5 попыток за 5 минут, подождите немного и попробуйте снова';
+						error=ltmp_arr.errors.attempts_limit;
 						$('.claim-action-error').html(error);
 						$('input[name=claim-action]').removeAttr('disabled');
 					}
 					if('claimed code'==result_json.result){
-						error='Код уже был активирован';
+						error=ltmp_arr.errors.invite_already_activated;
 						$('.claim-action-error').html(error);
 						$('input[name=claim-action]').removeAttr('disabled');
 					}
 					if('incorrect code'==result_json.result){
-						error='Код не найден';
+						error=ltmp_arr.errors.invite_not_founded;
 						$('.claim-action-error').html(error);
 						$('input[name=claim-action]').removeAttr('disabled');
 					}
 					if('broadcast error'==result_json.result){
-						error='Неполадки на сервере, попробуйте позже';
+						error=ltmp_arr.errors.server_error;
 						$('.claim-action-error').html(error);
 						$('input[name=claim-action]').removeAttr('disabled');
 					}
@@ -391,7 +422,7 @@ $(document).ready(function(){
 						$('input[name=claim-action]').attr('disabled','disabled');
 						$('input[name=claim-action]').css('display','none');
 						$('.claim-action-error').html('');
-						$('.claim-action-success').html('Вы успешно активировали код, средства должны поступить в течение 1 минуты');
+						$('.claim-action-success').html(ltmp_arr.success.invite);
 					}
 				},
 			});
@@ -401,9 +432,15 @@ $(document).ready(function(){
 		var account_login=el.val();
 		if(account_login.length>2){
 			var last_char=account_login.substr(-1,1);
+			var first_char=account_login.substr(0,1);
 			if(!/^([a-z0-9])$/.test(last_char)){
 				el.css('border-color','#ef1c1c');
-				$('.'+el.attr('data-available')).html('Логин должен заканчиваться на латинский символ или цифру');
+				$('.'+el.attr('data-available')).html(ltmp_arr.errors.account_last_symbol);
+			}
+			else
+				if(!/^([a-z])$/.test(first_char)){
+				el.css('border-color','#ef1c1c');
+				$('.'+el.attr('data-available')).html(ltmp_arr.errors.account_first_symbol);
 			}
 			else{
 				$.ajax({
@@ -418,7 +455,7 @@ $(document).ready(function(){
 						}
 						else{
 							el.css('border-color','#ef1c1c');
-							$('.'+el.attr('data-available')).html('Логин уже занят, попробуйте другой');
+							$('.'+el.attr('data-available')).html(ltmp_arr.errors.account_already_exist);
 						}
 					}
 				});
@@ -435,14 +472,23 @@ $(document).ready(function(){
 			if(!e)e=window.event;
 			e=e.originalEvent;
 			let char=e.data;
-			if(char.length>1){
-				char=char.slice(-1);
-			}
 			if(null!==char){
+				if(char.length>1){
+					char=char.slice(-1);
+				}
+				//more accurate for input char
+				let str=$(this).val();
+				let caret_position=$(this)[0].selectionStart;
+				let left_part=str.substr(0,caret_position-1);
+				let right_part=str.substr(caret_position);
+
 				save=true;
 				if(/^([A-Z])$/.test(char)){
-					$(this).val(''+$(this).val().slice(0,-char.length));
-					$(this).val(''+$(this).val()+char.toLowerCase());
+					//$(this).val(''+$(this).val().slice(0,-char.length));
+					//$(this).val(''+$(this).val()+char.toLowerCase());
+
+					$(this).val(left_part+char.toLowerCase()+right_part);
+					setCaretPosition($(this)[0],left_part.length+1);
 					return;
 				}
 				if(0==$(this).val().length){
@@ -461,8 +507,22 @@ $(document).ready(function(){
 						save=false;
 					}
 				}
+				//prevent double hyphen
+				if(-1!=str.indexOf('--')){
+					save=false;
+				}
+				//prevent login starts on digit or hyphen
+				if(/^([0-9\-])$/.test(str.substr(0,1))){
+					save=false;
+				}
+				//prevent login ends on hyphen
+				if(/^([\-])$/.test(str.substr(-1))){
+					save=false;
+				}
 				if(!save){
-					$(this).val(''+$(this).val().slice(0,-char.length));
+					//$(this).val(''+$(this).val().slice(0,-char.length));
+					$(this).val(left_part+right_part);
+					setCaretPosition($(this)[0],left_part.length);
 				}
 			}
 		});
@@ -505,14 +565,23 @@ $(document).ready(function(){
 			if(!e)e=window.event;
 			e=e.originalEvent;
 			let char=e.data;
-			if(char.length>1){
-				char=char.slice(-1);
-			}
 			if(null!==char){
+				if(char.length>1){
+					char=char.slice(-1);
+				}
+				//more accurate for input char
+				let str=$(this).val();
+				let caret_position=$(this)[0].selectionStart;
+				let left_part=str.substr(0,caret_position-1);
+				let right_part=str.substr(caret_position);
+
 				save=true;
 				if(/^([A-Z])$/.test(char)){
-					$(this).val(''+$(this).val().slice(0,-char.length));
-					$(this).val(''+$(this).val()+char.toLowerCase());
+					//$(this).val(''+$(this).val().slice(0,-char.length));
+					//$(this).val(''+$(this).val()+char.toLowerCase());
+
+					$(this).val(left_part+char.toLowerCase()+right_part);
+					setCaretPosition($(this)[0],left_part.length+1);
 					return;
 				}
 				if(0==$(this).val().length){
@@ -531,8 +600,22 @@ $(document).ready(function(){
 						save=false;
 					}
 				}
+				//prevent double hyphen
+				if(-1!=str.indexOf('--')){
+					save=false;
+				}
+				//prevent login starts on digit or hyphen
+				if(/^([0-9\-])$/.test(str.substr(0,1))){
+					save=false;
+				}
+				//prevent login ends on hyphen
+				if(/^([\-])$/.test(str.substr(-1))){
+					save=false;
+				}
 				if(!save){
-					$(this).val(''+$(this).val().slice(0,-char.length));
+					//$(this).val(''+$(this).val().slice(0,-char.length));
+					$(this).val(left_part+right_part);
+					setCaretPosition($(this)[0],left_part.length);
 				}
 			}
 		});
