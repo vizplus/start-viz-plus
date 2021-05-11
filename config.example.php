@@ -8,7 +8,12 @@ $config['db_base']='database';
 $config['jsonrpc_node']='https://solox.world/';
 
 //Google recaptcha secret
+$recaptcha_sitekey='XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
 $recaptcha_secret='XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+
+//hCaptcha secret
+$hcaptcha_sitekey='XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+$hcaptcha_secret='XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
 
 //VIZ credentials for registration (account, private active key)
 $reg_login='account';

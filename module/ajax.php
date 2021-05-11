@@ -118,13 +118,17 @@ if('account-create'==$path_array[2]){
 	header("Content-type:text/html; charset=UTF-8");
 	header('HTTP/1.1 200 Ok');
 	$api=new viz_jsonrpc_web($config['jsonrpc_node']);
-	$recaptcha_response=$_POST['recaptcha_response'];
+
+	//$recaptcha_response=$_POST['captcha_response'];
+	$hcaptcha_response=$_POST['captcha_response'];
 
 	$post_data=http_build_query(
 		array(
-			'secret'=>$recaptcha_secret,
-			'response'=>$recaptcha_response,
-			//'remoteip' => $_SERVER['REMOTE_ADDR']//enable for ip check
+			//'secret'=>$recaptcha_secret,
+			//'response'=>$recaptcha_response,
+			'secret'=>$hcaptcha_secret,
+			'response'=>$hcaptcha_response,
+			//'remoteip' => $_SERVER['REMOTE_ADDR']
 		)
 	);
 	$opts=array('http'=>
@@ -136,7 +140,8 @@ if('account-create'==$path_array[2]){
 		)
 	);
 	$context=stream_context_create($opts);
-	$response=file_get_contents('https://www.google.com/recaptcha/api/siteverify',false,$context);
+	//$response=file_get_contents('https://www.google.com/recaptcha/api/siteverify',false,$context);
+	$response=file_get_contents('https://hcaptcha.com/siteverify',false,$context);
 	$result=json_decode($response,true);
 
 	if(true==$result['success']){
@@ -151,17 +156,18 @@ if('account-create'==$path_array[2]){
 			$public_master=$_POST['public_master'];
 			$public_active=$_POST['public_active'];
 			$public_regular=$_POST['public_regular'];
+			$public_memo=$_POST['public_memo'];
 
 			$chain_properties=$api->execute_method('get_chain_properties',array());
 			$delegation=floatval($chain_properties['account_creation_fee'])*intval($chain_properties['create_account_delegation_ratio']);
 			$delegation=''.number_format($delegation,6,'.','').' SHARES';
 
-			$public_memo='VIZ1111111111111111111111111111111114T1Anm';
-			$tx1=build_account_create_tx($reg_wif,'1.000 VIZ',$delegation,$reg_login,$account_login,$public_master,$public_active,$public_regular,$public_memo,'','');
+			//$public_memo='VIZ1111111111111111111111111111111114T1Anm';
+			$tx1=build_account_create_tx($reg_wif,'0.000 VIZ',$delegation,$reg_login,$account_login,$public_master,$public_active,$public_regular,$public_memo,'','');
 			if($tx1){
 				$result=$api->execute_method('broadcast_transaction',$tx1);
 				if(false!==$result){
-					$tx2=build_delegate_vesting_shares_tx($reg_wif,$reg_login,$account_login,'0.000000 SHARES');
+					$tx2=build_delegate_vesting_shares_tx($reg_wif,$reg_login,$account_login,'1.000000 SHARES');
 					if($tx2){
 						$result=$api->execute_method('broadcast_transaction',$tx2);
 						if(false!==$result){
