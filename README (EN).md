@@ -1,33 +1,33 @@
 # start.VIZ.plus
 
-Перед вами открытый код сервиса [start.viz.plus](https://start.viz.plus/), который представляет собой сервис регистрации нулевого аккаунта в VIZ и активации заранее сгенерированных кодов по заданной цене в долларовом эквиваленте.
+Here is the open source code of the [start.vis.plus](https://start.viz.plus /) service, which is a service for registering a zero account in VIZ and activating pre-generated codes at a given price in dollar equivalent.
 
-Для доступа в панель администрирования необходимо выполнить вход по пути /login/, после чего вас перенаправит в панель управления.
+To access the administration panel, you must log in using the path /login/, after which you will be redirected to the control panel.
 
-## Скрипты
+## Scripts
 
-- config.example.php хранит параметры для доступа в административный скрипт, доступ к базе данных (MySQL), адрес ноды для JSON-RPC запросов, секретный ключ для API Google Recaptcha;
-- autoloader.php файл помощник для инициализации состояния других скриптов;
-- index.php инициализирует расбор пути и подключает запрашиваемый модуль, после чего заполняет шаблон и возвращает результат выполнения пользователю;
-- module/prepare.php содержит за предустановку значений и инициализацию сессии;
-- module/ajax.php предоставляет возможность запрашивать свободен ли логин и использовать код;
-- module/functions.php содержит методы для формирования сырых транзакций и их подписание используя secp256k1-php;
-- module/index.php содержит как пользовательскую часть, так и административную (позволяет авторизоваться для управления кодами, устанавливать цену в долларовом эквиваленте для 1 viz).
+- config.example.php stores parameters for access to the administrative script, database access (MySQL), node address for JSON-RPC requests, secret key for the Google Recaptcha API;
+- autoloader.php - the helper file for initializing the state of other scripts;
+- index.php initializes path parsing and connects the requested module, then fills in the template and returns the execution result to the user;
+- module/prepare.php contains preset values and starts session initialization;
+- module/ajax.php provides the ability to request whether the login is free and use the code;
+- module/functions.php contains methods for generating raw transactions and signing them using secp256k1-php;
+- module/index.php contains both the user part and the administrative part (allows you to log in to manage codes, set the price in dollar equivalent for 1 viz).
 
-## Сопутствующие файлы
+## Related files
 
-- tables.sql содержит SQL команды для создания таблиц связанных с хранением данных доступных для поиска и сортировки;
-- js файлы из зависимостей;
-- config.example.php требуется переименовать в config.php;
-- nginx.example.conf пример настройки nginx для корректного перенаправления всех запросов вида /path/to/page/ к корневому index.php.
+- tables.sql contains SQL commands for creating tables related to storing data available for search and sorting;
+- js files from dependencies;
+- config.example.php needs to be renamed to config.php;
+- nginx.example.conf is example of nginx configuration for correct redirection of all requests of the /path/to/page/ form to the root index.php .
 
-## Зависимости
+## Dependencies
 
 - MySQL;
 - nginx;
 - php;
 - Google Recaptcha;
-- jsonrpc нода VIZ;
-- jQuery;
-- viz-js-lib;
+- jsonrpc node NAMELY;
+- jQuery request;
+- namely-js-lib;
 - [secp256k1-php](https://github.com/On1x/secp256k1-php);
