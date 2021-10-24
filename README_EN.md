@@ -1,6 +1,6 @@
 # start.VIZ.plus
 
-Here is the open source code of the [start.vis.plus](https://start.viz.plus /) service, which is a service for registering a zero account in VIZ and activating pre-generated codes at a given price in dollar equivalent.
+Here is the open source code of the [start.vis.plus](https://start.viz.plus/) service, which is a service for registering a zero account in VIZ and activating pre-generated codes at a given price in dollar equivalent.
 
 To access the administration panel, you must log in using the path /login/, after which you will be redirected to the control panel.
 
