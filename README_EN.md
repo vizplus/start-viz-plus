@@ -27,7 +27,8 @@ To access the administration panel, you must log in using the path /login/, afte
 - nginx;
 - php;
 - Google Recaptcha;
-- jsonrpc node NAMELY;
-- jQuery request;
-- namely-js-lib;
+- jsonrpc VIZ node;
+- jQuery;
+- viz-js-lib;
 - [secp256k1-php](https://github.com/On1x/secp256k1-php);
+
